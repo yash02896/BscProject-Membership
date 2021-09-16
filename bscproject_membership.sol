@@ -619,26 +619,35 @@ contract rarity is ERC721Enumerable {
     
     function tokenURI(uint256 _summoner) public view returns (string memory) {
         string[7] memory parts;
-        parts[0] = '<svg xmlns="http://www.w3.org/2000/svg" preserveAspectRatio="xMinYMin meet" viewBox="0 0 350 350"><style>.base { fill: white; font-family: serif; font-size: 14px; }</style><rect width="100%" height="100%" fill="black" /><text x="10" y="20" class="base">';
+        parts[0] = '<svg xmlns="http://www.w3.org/2000/svg" preserveAspectRatio="xMinYMin meet" viewBox="0 0 350 350"><g stroke="none" stroke-width="1" fill="none" fill-rule="evenodd"><rect fill="#000000" x="0" y="0" width="100%" height="100%"></rect><text font-family="Rubik-Regular, Rubik" font-size="20" font-weight="normal" line-spacing="32" fill="#FFFFFF"><tspan x="32" y="51">';
 
-        parts[1] = string(abi.encodePacked("class", " ", toString(class[_summoner])));
+        parts[1] = string(abi.encodePacked("class", " ", classes(class[_summoner])));
 
-        parts[2] = '</text><text x="10" y="40" class="base">';
+        parts[2] = '</tspan><tspan x="32" y="83">';
 
-        parts[3] = string(abi.encodePacked("level", " ", toString(level[_summoner])));
+        parts[3] = string(abi.encodePacked("xp", " ", toString(xp[_summoner]/1e18)));
 
-        parts[4] = '</text><text x="10" y="60" class="base">';
+        parts[4] = '</tspan><tspan x="32" y="115">';
 
-        parts[5] = string(abi.encodePacked("xp", " ", toString(xp[_summoner]/1e18)));
+        parts[5] = string(abi.encodePacked("level", " ", toString(level[_summoner])));
 
-        parts[6] = '</text></svg>';
+        parts[6] = '</tspan></text></g></svg>';
 
         string memory output = string(abi.encodePacked(parts[0], parts[1], parts[2], parts[3], parts[4], parts[5], parts[6]));
         
-        string memory json = Base64.encode(bytes(string(abi.encodePacked('{"name": "summoner #', toString(_summoner), '", "description": "Inspired by Loot and Rarity, we bring BscProject DAO Membership to BSC community. Everyone can mint a membership NFT with no fees but only the gas.\\n\\nAll the membership NFTs are divided into three types: Human, Robot, Ape.\\n\\nExcept the type, xp and Level are also granted as basic attributes to the NFT. Owners should adventure to gain xp to level up their NFTs.\\n\\nMay the further expansions be driven by the community.", "image": "data:image/svg+xml;base64,', Base64.encode(bytes(output)), '"}'))));
+        string memory json = Base64.encode(bytes(string(abi.encodePacked('{"name": "Membership #', toString(_summoner), '", "description": "Inspired by Loot and Rarity, we bring BscProject DAO Membership to BSC community. Everyone can mint a membership NFT with no fees but only the gas.\\n\\nAll the membership NFTs are divided into three types: Human, Robot, Ape.\\n\\nExcept the type, xp and Level are also granted as basic attributes to the NFT. Owners should adventure to gain xp to level up their NFTs.\\n\\nMay the further expansions be driven by the community.", "image": "data:image/svg+xml;base64,', Base64.encode(bytes(output)), '"}'))));
         output = string(abi.encodePacked('data:application/json;base64,', json));
 
         return output;
+    }
+    function classes(uint id) public pure returns (string memory description) {
+        if (id == 1) {
+            return "Human";
+        } else if (id == 2) {
+            return "Robot";
+        } else if (id == 3) {
+            return "Ape";
+        }
     }
     
     function toString(uint256 value) internal pure returns (string memory) {
